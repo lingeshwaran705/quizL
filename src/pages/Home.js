@@ -12,11 +12,11 @@ function Home() {
         <ul>
           <li>
             It is mandatory to enter your roll no followed by your name. Eg
-            <b style={{ color: "blue" }}> 2101131name</b>
+            <b style={{ color: "blue" }}> 2101131 name</b>
           </li>
           <li>
-            Don't put spaces or any other special characters between the roll
-            number and your name
+            Don't put any other special characters between the roll number and
+            your name other than space
           </li>
           <li>You can choose multiple domains </li>
           <li>You can't able to attend the same domain more than one time</li>
@@ -62,8 +62,8 @@ const Container = styled.div`
     padding: 10px;
   }
   main {
-    height: 80%;
     display: flex;
+    background: #111;
     align-items: center;
     justify-content: center;
     flex-direction: column;
@@ -76,6 +76,7 @@ const Button = styled.button`
   border: none;
   padding: 10px 16px;
   font-size: 18px;
+  margin: 20px 0;
   &:hover {
     cursor: pointer;
   }

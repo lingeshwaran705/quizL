@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { changeLanguage } from "../features/language/langSlice";
 import styled from "styled-components";
-import { set, ref, child, get } from "firebase/database";
+import { ref } from "firebase/database";
 import { db } from "../utils/firebaseConfig";
-import { setDomain } from "../features/quiz/user";
+import { setDomain, setName } from "../features/quiz/user";
 const dbRef = ref(db);
 
 function Home() {
@@ -33,6 +33,7 @@ function Home() {
     dispatch(changeLanguage(name));
     navigate(name);
     dispatch(setDomain(name));
+    dispatch(setName(""));
   };
 
   return (

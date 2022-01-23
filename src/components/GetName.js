@@ -20,28 +20,39 @@ function GetName() {
     dispatch(setName(input));
     if (input === "") {
       dispatch(setError("Please Fill This Field"));
-    } else {
-      get(child(dbRef, `${user.domain}`))
-        .then((snapshot) => {
-          const usr = snapshot.val();
-          if (snapshot.exists()) {
-            if (usr[input] === 0 || usr[input]) {
-              dispatch(setError("User id already exists"));
-            } else {
-              update(ref(db, `${user.domain}`), {
-                [input]: 0,
-              });
-              dispatch(setError(""));
-            }
-          } else {
-            set(ref(db, `${user.domain}`), {
-              [input]: 0,
+    }
+    if (/^[0-9]{6}/g.test(input)) {
+      if (/[A-Za-z]{3,}$/g.test(input)) {
+        if (/\s/g.test(input)) {
+          get(child(dbRef, `${user.domain}`))
+            .then((snapshot) => {
+              const usr = snapshot.val();
+              if (snapshot.exists()) {
+                if (usr[input] === 0 || usr[input]) {
+                  dispatch(setError("User id already exists"));
+                } else {
+                  update(ref(db, `${user.domain}`), {
+                    [input]: 0,
+                  });
+                  dispatch(setError(""));
+                }
+              } else {
+                set(ref(db, `${user.domain}`), {
+                  [input]: 0,
+                });
+              }
+            })
+            .catch((error) => {
+              dispatch(setError("Invalid username"));
             });
-          }
-        })
-        .catch((error) => {
-          dispatch(setError("Invalid username"));
-        });
+        } else {
+          dispatch(setError("Give space between rno & name"));
+        }
+      } else {
+        dispatch(setError("Invalid username"));
+      }
+    } else {
+      dispatch(setError("Invalid username"));
     }
   };
 
