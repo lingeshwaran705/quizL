@@ -46,6 +46,8 @@ function Rank() {
 export default Rank;
 
 const Wrap = styled.div`
+  width: 100%;
+  height: 100vh;
   background: #222;
   h1 {
     padding: 20px;
@@ -57,7 +59,7 @@ const Wrap = styled.div`
 const Container = styled.section`
   background: black;
   width: 100%;
-  height: 100vh;
+  overflow: auto;
   display: flex;
   align-items: center;
   justify-content: center;

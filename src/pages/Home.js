@@ -10,7 +10,14 @@ function Home() {
       <main>
         <h3>Before starting the quiz read the instructions carefully</h3>
         <ul>
-          <li>It is mandatory to enter your official college mail id</li>
+          <li>
+            It is mandatory to enter your roll no followed by your name. Eg
+            <b style={{ color: "blue" }}> 2101131name</b>
+          </li>
+          <li>
+            Don't put spaces or any other special characters between the roll
+            number and your name
+          </li>
           <li>You can choose multiple domains </li>
           <li>You can't able to attend the same domain more than one time</li>
           <li>You have 25s to complete 1 question</li>

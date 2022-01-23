@@ -137,7 +137,7 @@ const Card = styled.tr`
   }
 
   &:nth-child(even) {
-    background: #444;
+    background: #222;
   }
 
   &:hover {

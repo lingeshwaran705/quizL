@@ -61,7 +61,9 @@ function Web() {
         </table>
       </main>
       <Button onClick={() => navigate("/quiz")}>Continue to home</Button>
-      <Button onClick={() => navigate("/rank")}>Back</Button>
+      <Button onClick={() => navigate("/rank")} variant>
+        Back
+      </Button>
     </Container>
   );
 }
@@ -135,7 +137,7 @@ const Card = styled.tr`
   }
 
   &:nth-child(even) {
-    background: #444;
+    background: #222;
   }
 
   &:hover {

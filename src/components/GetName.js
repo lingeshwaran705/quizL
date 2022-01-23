@@ -37,11 +37,10 @@ function GetName() {
             set(ref(db, `${user.domain}`), {
               [input]: 0,
             });
-            setError("");
           }
         })
         .catch((error) => {
-          console.error(error);
+          dispatch(setError("Invalid username"));
         });
     }
   };
@@ -49,7 +48,7 @@ function GetName() {
   return (
     <Container>
       <form onSubmit={submitHandler}>
-        <h4>Enter your official college mail id</h4>
+        <h4>Enter the roll no follwed by your name</h4>
         <input onChange={changeHandler} type="text" name="name" />
         {user.error ? <span>{user.error}</span> : ""}
         <button type="submit">Continue</button>

@@ -42,7 +42,6 @@ function Result() {
       .then((snapshot) => {
         if (snapshot.exists()) {
           setResult(snapshot.val());
-          console.log(snapshot.val());
         } else {
           console.log("No data available");
         }
