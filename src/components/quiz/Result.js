@@ -6,25 +6,27 @@ import { reset } from "../../features/quiz/qcount";
 import { resetResult } from "../../features/result/result";
 import { setName, setDomain } from "../../features/quiz/user";
 import { useDispatch, useSelector } from "react-redux";
-import { getDatabase, ref, child, get, update } from "firebase/database";
-import { db } from "../../utils/firebaseConfig";
 
 function Result() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [result, setResult] = useState();
-  const user = useSelector((state) => state.user.value);
+  const result = useSelector((state) => state.result.value);
+  const [performance, setPerformance] = useState("");
 
-  var performence = "";
-  if (result < 3) {
-    performence = "Poor";
-  } else if (result > 3 && result < 6) {
-    performence = "Good";
-  } else if (result > 6 && result < 9) {
-    performence = "Excellent";
-  } else {
-    performence = "MindBlowing";
-  }
+  useEffect(() => {
+    if (result < 10) {
+      setPerformance("Poor Performance");
+    } else if (result > 10 && result < 20) {
+      setPerformance("Good Performance");
+    } else if (result > 20 && result < 30) {
+      setPerformance("Your Performance is just Awsome");
+    } else if (result > 30 && result < 40) {
+      setPerformance("Such an Excellent Performance");
+    } else {
+      setPerformance("MindBlowing Performance");
+    }
+  }, [result]);
+
   const submitHandler = () => {
     setTimeout(() => {
       dispatch(ifSubmit(false));
@@ -36,33 +38,17 @@ function Result() {
     navigate("/quiz");
   };
 
-  useEffect(() => {
-    const dbRef = ref(db);
-    get(child(dbRef, `${user.domain}/${user.name}`))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          setResult(snapshot.val());
-        } else {
-          console.log("No data available");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  });
-
   return (
     <>
       <Group>
         <Card>
-          <h3 style={{ letterSpacing: "1px" }}>{performence} Performance </h3>
+          <h3 style={{ letterSpacing: "1px" }}>{performance}</h3>
         </Card>
         <Main>
           <h2>Your Score</h2>
           <Mark>{result}</Mark>
         </Main>
         <Button onClick={submitHandler}>Continue to home</Button>
-        <Button onClick={() => navigate("/rank")}>Overall Rank</Button>
       </Group>
     </>
   );

@@ -13,46 +13,41 @@ import {
 } from "../StyledComponents/HomeStyle";
 import styled from "styled-components";
 import { db } from "../../utils/firebaseConfig";
-import { getDatabase, ref, child, get, update } from "firebase/database";
-
+import { doc, updateDoc } from "firebase/firestore";
 function Question({ data }) {
   const qcount = useSelector((state) => state.qcount.value);
   const count = useSelector((state) => state.count.value);
   const [ans, setAns] = useState(0);
+  const [result, setResult] = useState(0);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
-  const [dbdata, setDbdata] = useState();
+  const dbdata = useSelector((state) => state.dbuser.value);
 
   useEffect(() => {
-    dispatch(setInitialCount(25));
+    setResult((prev) => {
+      return prev + (ans ? 1 : 0);
+    });
+  }, [ans]);
+
+  useEffect(() => {
+    dispatch(setInitialCount(30));
   }, [data]);
-
-  useEffect(() => {
-    const dbRef = ref(db);
-    get(child(dbRef, `${user.domain}/${user.name}`))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          setDbdata(snapshot.val());
-        } else {
-          console.log("No data available");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  });
 
   const increament = () => {
     if (qcount !== data.length - 1) {
-      dispatch(setInitialCount(25));
+      dispatch(setInitialCount(30));
       dispatch(next());
       setAns(0);
     } else {
+      const currentuser = dbdata.find((item) => item.user == user.name);
+      let newData = {
+        score: result,
+      };
+      const docRef = doc(db, user.domain, currentuser.id);
+      updateDoc(docRef, newData);
       dispatch(ifSubmit(true));
     }
-    update(ref(db), {
-      [`${user.domain}/${user.name}`]: dbdata + (ans ? 1 : 0),
-    });
+
     dispatch(changeResult(ans));
   };
 
@@ -79,8 +74,8 @@ function Question({ data }) {
 
   return (
     <Container>
-      <h3>{count}</h3>
-      <Heading color="blue">{data[qcount].question}</Heading>
+      <Counting sec={count}>{count}</Counting>
+      <Heading>{data[qcount].question}</Heading>
       <CardGroup>
         {data[qcount].answerOptions.map((answer) => {
           return (
@@ -103,9 +98,15 @@ export default Question;
 
 const Container = styled.section`
   width: 100%;
-  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
+`;
+
+const Counting = styled.h3`
+  display: block;
+  font-size: 22px;
+  font-family: "Roboto slab", sans-serif;
+  color: ${(props) => (props.sec > 10 ? "blue" : "orangered")};
 `;

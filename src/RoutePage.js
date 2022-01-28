@@ -13,7 +13,13 @@ const Rank = lazy(() => import("./components/quiz/RankList/Rank"));
 
 function RoutePage() {
   return (
-    <Suspense fallback={<Animation />}>
+    <Suspense
+      fallback={
+        <Animation>
+          <span />
+        </Animation>
+      }
+    >
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -22,9 +28,9 @@ function RoutePage() {
           <Route path="/quiz/webdev" element={<Web />} />
           <Route path="/quiz/blockchain" element={<Blockchain />} />
           <Route path="/rank" element={<Rank />} />
-          <Route path="/rank/webdev" element={<WebResult />} />
+          {/* <Route path="/rank/webdev" element={<WebResult />} />
           <Route path="/rank/appdev" element={<AppResult />} />
-          <Route path="/rank/blockchain" element={<BlockchainResult />} />
+          <Route path="/rank/blockchain" element={<BlockchainResult />} /> */}
         </Routes>
       </Router>
     </Suspense>
@@ -43,12 +49,20 @@ from{
 `;
 
 const Animation = styled.div`
-  width: 30px;
-  height: 30px;
-  background: transparent;
-  display: block;
-  border-top: 3px solid rgba(68, 2, 255, 1);
-  border-radius: 50%;
-  animation: ${rotate} 1s linear infinite;
-  margin: auto;
+  width: 100%;
+  height: 100vh;
+  background: black;
+  display: flex;
+  align-items: ceter;
+  justify-content: center;
+  span {
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    display: block;
+    border-top: 3px solid rgba(68, 2, 255, 1);
+    border-radius: 50%;
+    animation: ${rotate} 1s linear infinite;
+    margin: auto;
+  }
 `;

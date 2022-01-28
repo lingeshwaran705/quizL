@@ -1,52 +1,80 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector, useStore } from "react-redux";
-import { setName, setError } from "../features/quiz/user";
-import { app, db } from "../utils/firebaseConfig";
-import { ref, set, child, get, update } from "firebase/database";
+import { useDispatch, useSelector } from "react-redux";
+import { setName, setError, process } from "../features/quiz/user";
+import { setuser } from "../features/quiz/dbuser";
+import { db } from "../utils/firebaseConfig";
+import { findDep, findSection } from "./Calculation";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 
 function GetName() {
   const [input, setInput] = useState("");
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
-  const dbRef = ref(db);
+  const dbuser = useSelector((state) => state.dbuser.value);
+  const [data, setData] = useState([]);
+
+  const update = async () => {
+    const ref = await getDocs(collection(db, `${user.domain}`));
+    setData(ref.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    dispatch(setuser(ref.docs.map((doc) => ({ ...doc.data(), id: doc.id }))));
+  };
 
   const changeHandler = (e) => {
     setInput(e.target.value);
   };
 
-  const submitHandler = (e) => {
+  useEffect(() => {
+    if (dbuser.length !== 0) {
+      dispatch(process(false));
+    }
+  }, [data]);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
     dispatch(setName(input));
-    if (input === "") {
+    if (input == "") {
       dispatch(setError("Please Fill This Field"));
-    }
-    if (/^[0-9]{6}/g.test(input)) {
+    } else if (/^[0-9]{7}/g.test(input)) {
       if (/[A-Za-z]{3,}$/g.test(input)) {
-        if (/\s/g.test(input)) {
-          get(child(dbRef, `${user.domain}`))
-            .then((snapshot) => {
-              const usr = snapshot.val();
-              if (snapshot.exists()) {
-                if (usr[input] === 0 || usr[input]) {
-                  dispatch(setError("User id already exists"));
-                } else {
-                  update(ref(db, `${user.domain}`), {
-                    [input]: 0,
-                  });
-                  dispatch(setError(""));
-                }
-              } else {
-                set(ref(db, `${user.domain}`), {
-                  [input]: 0,
-                });
-              }
-            })
-            .catch((error) => {
-              dispatch(setError("Invalid username"));
-            });
+        const between = input.charAt(7);
+        console.log(between);
+        if (between == " ") {
+          dispatch(setError("Remove space between rno & name"));
         } else {
-          dispatch(setError("Give space between rno & name"));
+          if (/[^A-Za-z]/g.test(between)) {
+            dispatch(setError("Remove the special character"));
+          } else {
+            const duplicaterno = data.find(
+              (item) => item.rno == input.slice(0, 7)
+            );
+            if (duplicaterno) {
+              dispatch(setError("User already exists"));
+            } else {
+              if (data.length === 0) {
+                dispatch(process(true));
+              }
+              dispatch(setError(""));
+              const username = input.slice(7);
+              const rno = input.slice(0, 7);
+              const dep = rno.slice(2, 4);
+              const section = rno.charAt(4);
+              try {
+                await addDoc(collection(db, `${user.domain}`), {
+                  user: input,
+                  name: username,
+                  rno: rno,
+                  department: findDep(dep),
+                  section: findSection(section),
+                  score: 0,
+                });
+                update();
+                console.log("executin");
+              } catch (e) {
+                dispatch(setError("Something went wrong"));
+              }
+            }
+          }
         }
       } else {
         dispatch(setError("Invalid username"));
@@ -60,15 +88,19 @@ function GetName() {
     <Container>
       <form onSubmit={submitHandler}>
         <h4>Enter the roll no follwed by your name</h4>
-        <input onChange={changeHandler} type="text" name="name" />
+        <input
+          onChange={changeHandler}
+          autoComplete="off"
+          type="text"
+          name="name"
+        />
         {user.error ? <span>{user.error}</span> : ""}
+        {user.processing ? <p>Processing...</p> : ""}
         <button type="submit">Continue</button>
       </form>
     </Container>
   );
 }
-
-export default GetName;
 
 const Container = styled.section`
   background: #111;
@@ -125,3 +157,5 @@ const Container = styled.section`
     color: #f00;
   }
 `;
+
+export default GetName;

@@ -17,7 +17,7 @@ export default Card;
 
 const Container = styled.div`
   width: 250px;
-  height: 300px;
+  height: 270px;
   color: white;
   display: flex;
   align-items: center;
@@ -33,11 +33,15 @@ const Container = styled.div`
   }
   img {
     width: 100%;
-    height: 50%;
+    height: 70%;
     object-fit: cover;
   }
   h2 {
     height: 30%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
   }
 `;

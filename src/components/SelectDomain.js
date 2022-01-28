@@ -6,7 +6,8 @@ import styled from "styled-components";
 import { ref } from "firebase/database";
 import { db } from "../utils/firebaseConfig";
 import { setDomain, setName } from "../features/quiz/user";
-const dbRef = ref(db);
+import { ifSubmit } from "../features/submit/submit";
+import { reset } from "../features/quiz/qcount";
 
 function Home() {
   const opt = [
@@ -34,6 +35,8 @@ function Home() {
     navigate(name);
     dispatch(setDomain(name));
     dispatch(setName(""));
+    dispatch(ifSubmit(false));
+    dispatch(reset());
   };
 
   return (
@@ -46,7 +49,6 @@ function Home() {
             return (
               <Button
                 key={item.id}
-                onClick={() => clickHandler(item.route)}
                 onClick={() => clickHandler(item.route)}
                 variant="contained"
               >

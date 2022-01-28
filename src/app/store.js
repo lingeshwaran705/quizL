@@ -6,6 +6,7 @@ import qcountReducer from "../features/quiz/qcount";
 import questionReducer from "../features/quiz/questions";
 import countReducer from "../features/quiz/count";
 import nameSlice from "../features/quiz/user";
+import userSlice from "../features/quiz/dbuser";
 
 export default configureStore({
   reducer: {
@@ -16,5 +17,6 @@ export default configureStore({
     questions: questionReducer,
     count: countReducer,
     user: nameSlice,
+    dbuser: userSlice,
   },
 });

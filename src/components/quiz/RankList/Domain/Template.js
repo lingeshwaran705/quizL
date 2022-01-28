@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import styled, { keyframes, css } from "styled-components";
-import { ref, onValue } from "firebase/database";
+import styled, { css, keyframes } from "styled-components";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../../utils/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 const elementRef = React.createRef();
@@ -9,19 +9,22 @@ function Template(props) {
   const [data, setData] = useState();
   const [sorted, setSorted] = useState([]);
   const navigate = useNavigate();
+  const [error, setError] = useState(false);
   let id = 1;
   let array = [];
 
+  const temp = async () => {
+    const ref = await getDocs(collection(db, `${props.db}`));
+    setData(ref.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  };
+
   useEffect(() => {
-    onValue(ref(db, props.db), (snapshot) => {
-      setData(snapshot.val());
-    });
+    temp();
   }, []);
 
   useEffect(() => {
     for (const p in data) {
-      const obj = { name: p, score: data[p] };
-      array.push(obj);
+      array.push(data[p]);
     }
     array = array.filter(
       (value, index, self) =>
@@ -36,18 +39,40 @@ function Template(props) {
     setSorted(array);
   }, [data]);
 
+  useEffect(() => {
+    const id = setTimeout(() => {
+      if (!data) {
+        setError("No data found  Or Your network is too low");
+      }
+    }, 20000);
+    return () => {
+      clearInterval(id);
+    };
+  }, []);
+
   return (
-    <Container>
+    <Container animation={error ? 0 : 1}>
       <h2>Overall Rank List</h2>
-      <main>
-        {sorted.length === 0 ? (
-          <Animation />
-        ) : (
+      {sorted.length === 0 ? (
+        <Animation>
+          {error ? (
+            <p style={{ textAlign: "center", paddingTop: "20px" }}>
+              No Data Found Or Your Network is too low{" "}
+            </p>
+          ) : (
+            <span />
+          )}
+        </Animation>
+      ) : (
+        <main>
           <table ref={elementRef}>
             <thead>
               <tr>
                 <th>Rank</th>
+                <th>Roll no</th>
                 <th>Name</th>
+                <th>Deparment</th>
+                <th>Section</th>
                 <th>Score</th>
               </tr>
             </thead>
@@ -56,15 +81,18 @@ function Template(props) {
                 return (
                   <Card key={item.name}>
                     <td>{id++}</td>
+                    <td>{item.rno}</td>
                     <td>{item.name}</td>
+                    <td>{item.department}</td>
+                    <td>{item.section}</td>
                     <td>{item.score}</td>
                   </Card>
                 );
               })}
             </tbody>
           </table>
-        )}
-      </main>
+        </main>
+      )}
       <Button onClick={() => navigate("/rank")} variant>
         Back
       </Button>
@@ -113,10 +141,8 @@ const Container = styled.div`
   }
   main {
     overflow-x: auto;
+    width: 100%;
     min-height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
   table {
     padding: 20px 10px;
@@ -128,6 +154,10 @@ const Container = styled.div`
     }
     @media (max-width: 570px) {
       width: 600px;
+    }
+
+    & td {
+      font-family: "Roboto slab", sans-serif;
     }
   }
 `;
@@ -161,11 +191,18 @@ from{
 `;
 
 const Animation = styled.div`
-  width: 30px;
-  height: 30px;
-  background: transparent;
-  display: block;
-  border-top: 3px solid rgba(68, 2, 255, 1);
-  border-radius: 50%;
-  animation: ${rotate} 1s linear infinite;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: red;
+  span {
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border-radius: 50%;
+    border-top: 3px solid rgba(68, 2, 255, 1);
+    animation: ${rotate} 1s linear infinite;
+  }
 `;

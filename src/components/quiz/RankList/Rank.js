@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Card from "./Card";
 import { useNavigate } from "react-router-dom";
+import { ifSubmit } from "../../../features/submit/submit";
+import { useDispatch } from "react-redux";
 
 const data = [
   {
@@ -18,7 +20,7 @@ const data = [
   },
   {
     id: 3,
-    title: "Blockchain Developement",
+    title: "Blockchain",
     src: "/images/blockchain.jpg",
     route: "blockchain",
   },
@@ -26,27 +28,55 @@ const data = [
 
 function Rank() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const clickHandler = () => {
+    navigate("/");
+    dispatch(ifSubmit(false));
+  };
   return (
-    <Wrap>
-      <h1>Ranking</h1>
-      <Container>
-        {data.map((item) => {
-          return (
-            <Card
-              src={item.src}
-              title={item.title}
-              key={item.id}
-              route={item.route}
-            />
-          );
-        })}
-      </Container>
-      <Button onClick={() => navigate("/")}>Continue to home</Button>
-    </Wrap>
+    <>
+      {open ? (
+        <Wrap>
+          <h1>Ranking</h1>
+          <Container>
+            {data.map((item) => {
+              return (
+                <Card
+                  src={item.src}
+                  title={item.title}
+                  key={item.id}
+                  route={item.route}
+                />
+              );
+            })}
+          </Container>
+          <Button onClick={clickHandler}>Continue to home</Button>
+        </Wrap>
+      ) : (
+        <Error>
+          <h1>Result Will be published soon</h1>
+        </Error>
+      )}
+    </>
   );
 }
 
 export default Rank;
+
+const Error = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: 30px;
+  display: grid;
+  place-items: center;
+  background: #222;
+  h1 {
+    padding: 20px;
+    text-align: center;
+    color: white;
+  }
+`;
 
 const Wrap = styled.div`
   width: 100%;

@@ -1,18 +1,19 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
+import { getAnalytics } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB5l52RfYnVGvnDJxOUycb5RVCbkzMrj1g",
-  authDomain: "quizl-ccf21.firebaseapp.com",
-  databaseURL:
-    "https://quizl-ccf21-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "quizl-ccf21",
-  storageBucket: "quizl-ccf21.appspot.com",
-  messagingSenderId: "1065969533318",
-  appId: "1:1065969533318:web:adc1cae976c6f9a7e4ac07",
-  measurementId: "G-X274RZPCEZ",
+  apiKey: "AIzaSyDEUmqF67rC8mh4JM891mz0g6WBqPWxn7k",
+  authDomain: "quizl-ef4e3.firebaseapp.com",
+  projectId: "quizl-ef4e3",
+  storageBucket: "quizl-ef4e3.appspot.com",
+  messagingSenderId: "204949373215",
+  appId: "1:204949373215:web:453951cd089cc72ffe702a",
+  measurementId: "G-5H76PVXL97",
 };
 
-export const app = initializeApp(firebaseConfig);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
-export const db = getDatabase(app);
+export const db = getFirestore(app);

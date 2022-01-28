@@ -47,7 +47,8 @@ export const Heading = styled.h1`
   color: ${(props) => (props.color ? "blue" : "")};
   letter-spacing: 1px;
   line-height: 35px;
-  border-bottom: 2px solid #333;
+  border-bottom: 2px solid blue;
+  width: 100%;
 `;
 
 export const CardGroup = styled.div`
